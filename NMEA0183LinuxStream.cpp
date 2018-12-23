@@ -35,6 +35,7 @@ Inherited tNMEA0183Stream object for Linux
 #include <sys/select.h>
 #include "NMEA0183LinuxStream.h"
 
+using namespace std;
 
 //*****************************************************************************
 tNMEA0183LinuxStream::tNMEA0183LinuxStream(const char *_port) : port(-1) {
@@ -43,9 +44,11 @@ tNMEA0183LinuxStream::tNMEA0183LinuxStream(const char *_port) : port(-1) {
   }
 
   if ( port!=-1 ) {
-//    cout << _port << " Opened" << endl;
+    cout << _port << " Opened" << endl;
   } else {
-//    if ( _port!=0 ) cout << "Failed to open port " << _port << endl;
+    if ( _port!=0 ) {
+      cout << "Failed to open port " << _port << endl;
+    }
   }
 }
 
