@@ -124,34 +124,34 @@ class tNMEA0183Msg
 
     // Init message building.
     bool Init(const char *_MessageCode, const char *_Sender="II", char _Prefix='$');
+
     // Add field with no data. Causes ,, in final message.
-    
     bool AddEmptyField();
+
     // Add string field. E.g. AddStrField("K") causes ,K, on final message.
-    
     bool AddStrField(const char *FieldData);
+
     // Add double field. val must be in SI units (as in NMEA2000). Provide multiplier for conversion and
     // Format (default %.1f), if necessary. If you also provide Unit, it will be added as own field.
     // Note also that function tests is value valid and adds empty field, if it is not.
     // Examples:
     // NMEA0183Msg.AddDoubleField(120.123,radToDeg,tNMEA0183Msg::DefDoubleFormat,"M"); -> ,120.1,M
     // NMEA0183Msg.AddDoubleField(23.123); -> ,23.1
-    
     bool AddDoubleField(double val, double multiplier=1, const char *Format=DefDoubleFormat, const char *Unit=0);
+
     // Add time field. GPSTime is just seconds since midnight.
-    
     bool AddTimeField(double GPSTime, const char *Format="%09.2f");
+
     // Add Days field.
-    
     bool AddDaysField(unsigned long DaysSince1970);
+
     // Add Latitude field. Also E/W will be added. Latitude is in degrees. Negative value is W. E.g.
     // AddLatitudeField(-5.2345); -> ,5.235,W
-    
     bool AddLatitudeField(double Latitude, const char *Format="%.3f");
     
     // Add Longitude field. Also N/S will be added. Longitude is in degrees. Negative value is S. E.g.
     // AddLongitudeField(-5.2345); -> ,514.070,S
-    bool AddLongitudeField(double Longitude, const char *Format="%.3f");
+    bool AddLongitudeField(double Longitude, const char *Format="%09.3f");
 
     // Helper function to convert GPSTime to NMEA0183 time (hhmmss.sss). E.g. 42000.55 -> 114000.55
     static double GPSTimeToNMEA0183Time(double GPSTime);
