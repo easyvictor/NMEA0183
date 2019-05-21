@@ -346,7 +346,7 @@ bool NMEA0183SetRMC(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, 
   if ( SOG!=NMEA0183DoubleNA && SOG<0 ) {
     if ( TrueCOG!=NMEA0183DoubleNA  ) TrueCOG+=pi;
   }
-  if ( TrueCOG!=NMEA0183DoubleNA  ) TrueCOG=fmod(TrueCOG,pi);
+  if ( TrueCOG!=NMEA0183DoubleNA  ) TrueCOG=fmod(TrueCOG,2*pi);
 
   if ( !NMEA0183Msg.Init("RMC",Src) ) return false;
   if ( !NMEA0183Msg.AddTimeField(GPSTime) ) return false;
