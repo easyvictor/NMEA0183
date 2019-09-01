@@ -684,3 +684,11 @@ bool NMEA0183SetVHW(tNMEA0183Msg &NMEA0183Msg, double TrueHeading, double Magnet
   return true;
 }
 
+//*****************************************************************************
+// MTW - Water Temperature
+bool NMEA0183SetMTW(tNMEA0183Msg &NMEA0183Msg, double Temperature, const char *Src) {
+  if ( !NMEA0183Msg.Init("MTW",Src) ) return false;
+  if ( !NMEA0183Msg.AddDoubleField(Temperature) ) return false;
+  if ( !NMEA0183Msg.AddStrField("C") ) return false;
+  return true;
+}

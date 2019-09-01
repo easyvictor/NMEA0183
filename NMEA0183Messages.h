@@ -365,4 +365,10 @@ bool NMEA0183SetMWV(tNMEA0183Msg &NMEA0183Msg, double WindAngle, tNMEA0183WindRe
 // VHW - Water speed and heading
 bool NMEA0183SetVHW(tNMEA0183Msg &NMEA0183Msg, double TrueHeading, double MagneticHeading, double BoatSpeed, const char *Src="II");
 
-#endif
+
+//*****************************************************************************
+// MTW - Water Temperature
+// Temperature - degrees C
+bool NMEA0183SetMTW(tNMEA0183Msg &NMEA0183Msg, double Temperature, const char *Src="II" );
+
+#endif //_tNMEA0183_MESSAGES_H_
