@@ -189,11 +189,13 @@ bool NMEA0183ParseGGA_nc(const tNMEA0183Msg &NMEA0183Msg, double &GPSTime, doubl
     DGPSAge=atof(NMEA0183Msg.Field(12));
     DGPSReferenceStationID=atoi(NMEA0183Msg.Field(13));
   }
+
   return result;
 }
 
-bool NMEA0183SetGGA(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, int GPSQualityIndicator, int SatelliteCount,
-                    double HDOP, double Altitude, double GeoidalSeparation, double DGPSAge, int DGPSReferenceStationID, const char *Src) {
+bool NMEA0183SetGGA(tNMEA0183Msg &NMEA0183Msg, double &GPSTime, double &Latitude, double &Longitude,
+                      int &GPSQualityIndicator, int &SatelliteCount, double &HDOP, double &Altitude, double &GeoidalSeparation,
+                      double &DGPSAge, int &DGPSReferenceStationID, const char *Src) {
   if ( !NMEA0183Msg.Init("GGA",Src) ) return false;
 //  if ( !NMEA0183Msg.AddDoubleField(WindAngle) ) return false;
 //  if ( !NMEA0183Msg.AddStrField(Reference==NMEA0183Wind_True?"T":"R") ) return false;
@@ -206,27 +208,19 @@ bool NMEA0183SetGGA(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, 
 //*****************************************************************************
 //$GPGLL,5246.241,N,00506.648,E,155957,A*2B
 //$GPGLL,,,,,155648,*5B
-bool NMEA0183ParseGLL_nc(const tNMEA0183Msg &NMEA0183Msg, double &GPSTime, double &Latitude, double &Longitude, double &status) {
+bool NMEA0183ParseGLL_nc(const tNMEA0183Msg &NMEA0183Msg, tGLL &GLL) {
+
   bool result=( NMEA0183Msg.FieldCount()>= 6);
 
   if ( result ) {
-    Latitude=LatLonToDouble(NMEA0183Msg.Field(0),NMEA0183Msg.Field(1)[0]);
-    Longitude=LatLonToDouble(NMEA0183Msg.Field(2),NMEA0183Msg.Field(3)[0]);
-    GPSTime=NMEA0183GPTimeToSeconds(NMEA0183Msg.Field(4));
-    status=NMEA0183Msg.Field(5)[0];
+    GLL.latitude=LatLonToDouble(NMEA0183Msg.Field(0),NMEA0183Msg.Field(1)[0]);
+    GLL.longitude=LatLonToDouble(NMEA0183Msg.Field(2),NMEA0183Msg.Field(3)[0]);
+    GLL.GPSTime=NMEA0183GPTimeToSeconds(NMEA0183Msg.Field(4));
+    GLL.status=NMEA0183Msg.Field(5)[0];
   }
   return result;
 }
 
-bool NMEA0183SetGLL(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, double status, const char *Src) {
-  if ( !NMEA0183Msg.Init("GLL",Src) ) return false;
-//  if ( !NMEA0183Msg.AddDoubleField(WindAngle) ) return false;
-//  if ( !NMEA0183Msg.AddStrField(Reference==NMEA0183Wind_True?"T":"R") ) return false;
-//  if ( !NMEA0183Msg.AddDoubleField(WindSpeed) ) return false;
-//  if ( !NMEA0183Msg.AddStrField("M") ) return false;
-//  if ( !NMEA0183Msg.AddStrField("A") ) return false;
-  return true;
-}
 
 //*****************************************************************************
 //$GPRMB,A,0.15,R,WOUBRG,WETERB,5213.400,N,00438.400,E,009.4,180.2,,V*07
@@ -332,6 +326,7 @@ bool NMEA0183ParseVTG_nc(const tNMEA0183Msg &NMEA0183Msg, double &TrueCOG, doubl
       SOG=atof(NMEA0183Msg.Field(4))*knToms;
     }
   }
+
   return result;
 }
 

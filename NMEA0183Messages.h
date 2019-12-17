@@ -182,19 +182,23 @@ inline bool NMEA0183ParseGGA(const tNMEA0183Msg &NMEA0183Msg, double &GPSTime, d
             :false);
 }
 
+inline bool NMEA0183ParseGGA(const tNMEA0183Msg &NMEA0183Msg, tGGA &gga) {
+
+	return NMEA0183ParseGGA(NMEA0183Msg,gga.GPSTime,gga.latitude,gga.longitude,gga.GPSQualityIndicator,
+										gga.satelliteCount,gga.HDOP,gga.altitude,gga.geoidalSeparation,gga.DGPSAge,gga.DGPSReferenceStationID);
+}
+
 bool NMEA0183SetGGA(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, int GPSQualityIndicator, int SatelliteCount, 
 	                  double HDOP, double Altitude, double GeoidalSeparation, double DGPSAge, int DGPSReferenceStationID, const char *Src="GP");
 
 //*****************************************************************************
-bool NMEA0183ParseGLL_nc(const tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, double status);
+bool NMEA0183ParseGLL_nc(const tNMEA0183Msg &NMEA0183Msg, tGLL &gll);
 
-inline bool NMEA0183ParseGLL(const tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, double status) {
+inline bool NMEA0183ParseGLL(const tNMEA0183Msg &NMEA0183Msg, tGLL &gll) {
   return (NMEA0183Msg.IsMessageCode("GLL")
-            ?NMEA0183ParseGLL_nc(NMEA0183Msg,GPSTime,Latitude,Longitude,status)
+            ?NMEA0183ParseGLL_nc(NMEA0183Msg,gll)
             :false);
 }
-
-bool NMEA0183SetGLL(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, double status, const char *Src="GP");
 
 //*****************************************************************************
 bool NMEA0183ParseRMB_nc(const tNMEA0183Msg &NMEA0183Msg, tRMB &rmb);
