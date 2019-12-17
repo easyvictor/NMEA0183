@@ -96,7 +96,7 @@ class tNMEA0183Msg
     static inline int GetMonth(const tmElements_t &TimeElements) { return TimeElements.tm_mon+1; }
     static inline int GetDay(const tmElements_t &TimeElements) { return TimeElements.tm_mday; }
     static inline time_t makeTime(tmElements_t &TimeElements) { return mktime(&TimeElements); }
-    static inline void breakTime(time_t time, tmElements_t &TimeElements) { TimeElements=*localtime(&time); }
+    static inline void breakTime(time_t time, tmElements_t &TimeElements) { TimeElements=*gmtime(&time); }
     static time_t daysToTime_t(unsigned long val);
     #endif
     static unsigned long elapsedDaysSince1970(time_t dt);
