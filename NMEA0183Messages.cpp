@@ -193,17 +193,6 @@ bool NMEA0183ParseGGA_nc(const tNMEA0183Msg &NMEA0183Msg, double &GPSTime, doubl
   return result;
 }
 
-bool NMEA0183SetGGA(tNMEA0183Msg &NMEA0183Msg, double &GPSTime, double &Latitude, double &Longitude,
-                      int &GPSQualityIndicator, int &SatelliteCount, double &HDOP, double &Altitude, double &GeoidalSeparation,
-                      double &DGPSAge, int &DGPSReferenceStationID, const char *Src) {
-  if ( !NMEA0183Msg.Init("GGA",Src) ) return false;
-//  if ( !NMEA0183Msg.AddDoubleField(WindAngle) ) return false;
-//  if ( !NMEA0183Msg.AddStrField(Reference==NMEA0183Wind_True?"T":"R") ) return false;
-//  if ( !NMEA0183Msg.AddDoubleField(WindSpeed) ) return false;
-//  if ( !NMEA0183Msg.AddStrField("M") ) return false;
-//  if ( !NMEA0183Msg.AddStrField("A") ) return false;
-  return true;
-}
 
 //*****************************************************************************
 //$GPGLL,5246.241,N,00506.648,E,155957,A*2B

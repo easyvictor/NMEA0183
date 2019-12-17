@@ -188,9 +188,6 @@ inline bool NMEA0183ParseGGA(const tNMEA0183Msg &NMEA0183Msg, tGGA &gga) {
 										gga.satelliteCount,gga.HDOP,gga.altitude,gga.geoidalSeparation,gga.DGPSAge,gga.DGPSReferenceStationID);
 }
 
-bool NMEA0183SetGGA(tNMEA0183Msg &NMEA0183Msg, double GPSTime, double Latitude, double Longitude, int GPSQualityIndicator, int SatelliteCount, 
-	                  double HDOP, double Altitude, double GeoidalSeparation, double DGPSAge, int DGPSReferenceStationID, const char *Src="GP");
-
 //*****************************************************************************
 bool NMEA0183ParseGLL_nc(const tNMEA0183Msg &NMEA0183Msg, tGLL &gll);
 
