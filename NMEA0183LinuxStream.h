@@ -35,10 +35,11 @@ class tNMEA0183LinuxStream : public tNMEA0183Stream {
 protected:
   int port;
 public:
-    tNMEA0183LinuxStream(const char *_port=0);
+    tNMEA0183LinuxStream(const char *_fd = 0, uint32_t _baud = 0);
     virtual ~tNMEA0183LinuxStream();
     int read();
     size_t write(const uint8_t* data, size_t size);
+    int available();
 };
 #endif
 

@@ -55,6 +55,23 @@ class tNMEA0183
     bool SendBuf(const char *buf);
     bool CanSendByte();
   public:
+    // Class for inheritance of callbacks
+    class tMsgHandler {
+      private:
+        friend class tNMEA0183;
+        tNMEA0183* pNMEA0183;
+      protected:
+        virtual void HandleMsg(const tNMEA0183Msg &NMEA0183Msg) = 0;
+      public:
+        tMsgHandler(tNMEA0183 *_pNMEA0183 = NULL) { 
+          pNMEA0183 = _pNMEA0183;
+          if (pNMEA0183 != NULL) pNMEA0183->AttachMsgHandler(this);
+        }
+        virtual ~tMsgHandler() {
+          if (pNMEA0183 != NULL) pNMEA0183->DetachMsgHandler(this); 
+        }
+    };
+    
     tNMEA0183(tNMEA0183Stream *stream=0, uint8_t _SourceID=0);
     void SetMessageStream(tNMEA0183Stream *stream, uint8_t _SourceID=0);
     bool Open();
@@ -66,6 +83,10 @@ class tNMEA0183
     void SetSendBufferSize(size_t size);
     // Set call back function, which will be called for new messages on ParseMessages.
     void SetMsgHandler(void (*_MsgHandler)(const tNMEA0183Msg &NMEA0183Msg)) {MsgHandler=_MsgHandler;}
+    // Attach a handler that has inherited the tMsgHandler class. Allows member functions.
+    void AttachMsgHandler(tMsgHandler* pMsgHandler);
+    // Detach the handler that has inherited the tMsgHandler class.
+    void DetachMsgHandler(tMsgHandler* pMsgHandler);
     // Call this in loop to read incoming messages or empty buffered sent messages.
     // For new messages message handler will be called.
     void ParseMessages();
@@ -79,6 +100,9 @@ class tNMEA0183
     // These are obsolete. Use SendMessage
     bool SendMessage(const char *buf);
     void kick();
+
+  protected:
+    tMsgHandler* pChildMsgHandler;
 };
 
 #endif

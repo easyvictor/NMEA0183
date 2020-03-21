@@ -32,7 +32,7 @@ tNMEA0183::tNMEA0183(tNMEA0183Stream *stream, uint8_t _SourceID)
 : port(0), MsgCheckSumStartPos(SIZE_MAX),
   MsgInPos(0), MsgInStarted(false),
   MsgOutWritePos(0), MsgOutReadPos(0), MsgOutBuf(0), MsgOutBufSize(3*MAX_NMEA0183_MSG_BUF_LEN),
-  MsgHandler(0)
+  MsgHandler(0), pChildMsgHandler(NULL)
 {
   SetMessageStream(stream,_SourceID);
 }
@@ -41,6 +41,16 @@ tNMEA0183::tNMEA0183(tNMEA0183Stream *stream, uint8_t _SourceID)
 void tNMEA0183::SetMessageStream(tNMEA0183Stream *stream, uint8_t _SourceID) {
   SourceID=_SourceID;
   port=stream;
+}
+
+//*****************************************************************************
+void tNMEA0183::AttachMsgHandler(tMsgHandler* pMsgHandler) {
+  pChildMsgHandler = pMsgHandler;
+}
+
+//*****************************************************************************
+void tNMEA0183::DetachMsgHandler(tMsgHandler* pMsgHandler) {
+  pChildMsgHandler = NULL;
 }
 
 //*****************************************************************************
@@ -76,11 +86,10 @@ void tNMEA0183::SetSendBufferSize(size_t size) {
 //*****************************************************************************
 void tNMEA0183::ParseMessages() {
   tNMEA0183Msg NMEA0183Msg;
-
     if ( !Open() ) return;
-
     while (GetMessage(NMEA0183Msg)) {
       if (MsgHandler!=0) MsgHandler(NMEA0183Msg);
+      if (pChildMsgHandler) pChildMsgHandler->HandleMsg(NMEA0183Msg);
     }
     kick();
 }
@@ -93,31 +102,31 @@ bool tNMEA0183::GetMessage(tNMEA0183Msg &NMEA0183Msg) {
 
   while (port->available() > 0 && !result) {
     int NewByte=port->read();
-      if (NewByte=='$' || NewByte=='!') { // Message start
-        MsgInStarted=true;
+    if (NewByte=='$' || NewByte=='!') { // Message start
+      MsgInStarted=true;
+      MsgInPos=0;
+      MsgInBuf[MsgInPos]=NewByte;
+      MsgInPos++;
+    } else if (MsgInStarted) {
+      MsgInBuf[MsgInPos]=NewByte;
+      if (NewByte=='*') MsgCheckSumStartPos=MsgInPos;
+      MsgInPos++;
+      if (MsgCheckSumStartPos!=SIZE_MAX and MsgCheckSumStartPos+3==MsgInPos) { // We have full checksum and so full message
+          MsgInBuf[MsgInPos]=0; // add null termination
+        if (NMEA0183Msg.SetMessage(MsgInBuf)) {
+          NMEA0183Msg.SourceID=SourceID;
+          result=true;
+        }
+        MsgInStarted=false;
         MsgInPos=0;
-        MsgInBuf[MsgInPos]=NewByte;
-        MsgInPos++;
-      } else if (MsgInStarted) {
-        MsgInBuf[MsgInPos]=NewByte;
-        if (NewByte=='*') MsgCheckSumStartPos=MsgInPos;
-        MsgInPos++;
-        if (MsgCheckSumStartPos!=SIZE_MAX and MsgCheckSumStartPos+3==MsgInPos) { // We have full checksum and so full message
-            MsgInBuf[MsgInPos]=0; // add null termination
-          if (NMEA0183Msg.SetMessage(MsgInBuf)) {
-            NMEA0183Msg.SourceID=SourceID;
-            result=true;
-          }
-          MsgInStarted=false;
-          MsgInPos=0;
-          MsgCheckSumStartPos=SIZE_MAX;
-        }
-        if (MsgInPos>=MAX_NMEA0183_MSG_BUF_LEN) { // Too may chars in message. Start from beginning
-          MsgInStarted=false;
-          MsgInPos=0;
-          MsgCheckSumStartPos=SIZE_MAX;
-        }
+        MsgCheckSumStartPos=SIZE_MAX;
       }
+      if (MsgInPos>=MAX_NMEA0183_MSG_BUF_LEN) { // Too may chars in message. Start from beginning
+        MsgInStarted=false;
+        MsgInPos=0;
+        MsgCheckSumStartPos=SIZE_MAX;
+      }
+    }
   }
 
   return result;
