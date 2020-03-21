@@ -529,6 +529,24 @@ bool NMEA0183SetHDM(tNMEA0183Msg &NMEA0183Msg, double Heading, const char *Src) 
 }
 
 //*****************************************************************************
+// $HCHDG,347.8,3.0,E,2.0,W*4A
+//        0     1   2 3   4 
+bool NMEA0183ParseHDG_nc(const tNMEA0183Msg &NMEA0183Msg, double &MagneticHeading, double &Deviation, double &Variation) {
+  bool result = (NMEA0183Msg.FieldCount() >= 5);
+  if (result) {
+    MagneticHeading = NMEA0183GetDouble(NMEA0183Msg.Field(0), degToRad);
+    Deviation = NMEA0183GetDouble(NMEA0183Msg.Field(1), degToRad);
+    if (Deviation != NMEA0183DoubleNA && strcmp(NMEA0183Msg.Field(2), "W") == 0) {
+      Deviation = -Deviation;
+    }
+    Variation = NMEA0183GetDouble(NMEA0183Msg.Field(3), degToRad);
+    if (Variation != NMEA0183DoubleNA && strcmp(NMEA0183Msg.Field(4), "W") == 0) {
+      Variation = -Variation;
+    }
+  }
+  return result;
+}
+
 bool NMEA0183SetHDG(tNMEA0183Msg &NMEA0183Msg, double Heading, double Deviation, double Variation, const char *Src) {
   if ( !NMEA0183Msg.Init("HDG",Src) ) return false;
   if ( !NMEA0183Msg.AddDoubleField(Heading,radToDeg) ) return false;
